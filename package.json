@@ -1,0 +1,18 @@
+{
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "mysql2": "^3.9.3",
+    "openai": "^4.33.0"
+  },
+  "name": "testopenai",
+  "version": "1.0.0",
+  "description": "Test to translate natural language to SQL",
+  "type": "module",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "D4souls",
+  "license": "ISC"
+}
