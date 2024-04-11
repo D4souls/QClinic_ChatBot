@@ -6,6 +6,7 @@ dotenv.config();
 
 const pool = mysql.createPool({
     host: process.env.MYSQL_HOST,
+    port: process.env.MYSQL_PORT,
     user: process.env.MYSQL_USER,
     password: process.env.MYSQL_PASSWORD,
     database: process.env.MYSQL_DATABASE
@@ -38,10 +39,10 @@ export async function botQuery(query) {
 
     try {
         
-        const selectRegEx = new RegExp('^SELECT', 'i');
-        const insertRegEx = new RegExp('^INSERT', 'i');
-        const updateRegEx = new RegExp('^UPDATE', 'i');
-        const deleteRegEx = new RegExp('^DELETE', 'i');
+        const selectRegEx = /^SELECT/i;
+        const insertRegEx = /^INSERT/i;
+        const updateRegEx = /^UPDATE/i;
+        const deleteRegEx = /^DELETE/i;
         
         if (selectRegEx.test(query)) {
             
@@ -92,7 +93,7 @@ async function insertQuery(query){
         if (rows.affectedRows > 0){
 
             // Return result to ChatGPT again to create SELECT QUERY
-            const assistant = await callAssistant(`Quiero recuperar la información del insert que acabo de crear, aqui tienes los datos necesarios para realizarlo: ${rows.insertId}`)
+            const assistant = await callAssistant(`¿Qué consulta SQL necesito para obtener los datos que acabo de solicitar? Solamente retorna el comando SQL necesario.`)
 
             if (assistant) {
                 const getNewItem = await botQuery(formatBotResponse(assistant));
@@ -115,7 +116,7 @@ async function deleteQuery(query){
 
         if (rows.affectedRows > 0) {
             // Return result to ChatGPT again to create a info message
-            const assistant = await callAssistant(`A partir de esta información podrías devolver un mensaje informativo al usuario en base a la última pregunta realizada? Información: ${rows}`);
+            const assistant = await callAssistant(`Una vez realizada la acción necesito retornar un mensaje al usuario indicando si la consulta ha ido bien o no: ${rows.affectedRows}`);
     
             if (assistant) {
                 const infoMessage = await botQuery(formatBotResponse(assistant));
@@ -136,7 +137,17 @@ async function updateQuery(query){
         
         const [rows] = await pool.query(query);
 
-        return rows.affectedRows > 0 ? {success: true, data: rows} : {success: true, data: "Error updating"}
+        if (rows.affectedRows > 0) {
+            // Return result to ChatGPT again to create a info message
+            const assistant = await callAssistant(`Una vez realizada la acción necesito retornar un mensaje al usuario indicando si la consulta ha ido bien o no: ${rows.affectedRows}`);
+    
+            if (assistant) {
+                const infoMessage = await botQuery(formatBotResponse(assistant));
+                return infoMessage;
+            }
+        } else {
+            return {success: false, data: `Error deleting query`}
+        }
 
     } catch (error) {
         return {success: false, error: error.message}
