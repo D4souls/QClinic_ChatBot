@@ -4,6 +4,8 @@ import { botQuery, testQuery } from './database.js';
 import { callAssistant } from './chatBot/chatbot.js'
 import { formatBotResponse } from './database.js';
 import { filterQuery } from './chatBot/Functions/filterQuery.js';
+import dotenv from 'dotenv'
+dotenv.config();
 
 const app = express();
 app.use(bodyParser.json());
@@ -14,10 +16,11 @@ app.use((err, req, res, next) => {
 });
 
 const port = 4047;
-const ip = `http://localhost:${port}`;
+const ip = 'localhost';
+const fullAddress = `http://${ip}:${port}`;
 
 app.listen(port, () => {
-    console.log(`[?] Server is running on ${ip}`)
+    console.log(`\u001b[35m[System] Server is running on ${fullAddress}\u001b[0m`);
 })
 
 app.get("/test", async (req, res) => {
