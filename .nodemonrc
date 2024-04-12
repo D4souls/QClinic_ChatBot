@@ -1,4 +1,5 @@
 {
+  "type": "json",
   "events": {
     "start": "echo \u001b[36m[System] Searching changes on QClinic_ChatBot\u001b[0m",
     "restart": "clear && echo \u001b[33m[System] Restarting QClinic_ChatBot\u001b[0m"

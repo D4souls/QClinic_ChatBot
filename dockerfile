@@ -5,7 +5,7 @@ FROM node:latest
 WORKDIR /usr/src/app
 
 # Copia los archivos necesarios para instalar dependencias
-COPY package*.json ./
+COPY * ./
 
 # Instala las dependencias
 RUN npm install
@@ -17,4 +17,4 @@ COPY . .
 EXPOSE 4047
 
 # Comando para ejecutar la aplicación
-CMD ["node", "app.js"]
+CMD ["npm", "start"]
