@@ -2,7 +2,7 @@
 FROM node:latest
 
 # Establece el directorio de trabajo en el contenedor
-WORKDIR /usr/src/app
+WORKDIR /app
 
 # Copia los archivos necesarios para instalar dependencias
 COPY * ./
