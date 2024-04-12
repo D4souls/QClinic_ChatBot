@@ -5,7 +5,7 @@ FROM node:latest
 WORKDIR /app
 
 # Copia los archivos necesarios para instalar dependencias
-COPY * ./
+COPY package*.json ./
 
 # Instala las dependencias
 RUN npm install
