@@ -116,7 +116,7 @@ async function deleteQuery(query){
 
         if (rows.affectedRows > 0) {
             // Return result to ChatGPT again to create a info message
-            const assistant = await callAssistant(`Una vez realizada la acción necesito retornar un mensaje al usuario indicando si la consulta ha ido bien o no: ${rows.affectedRows}`);
+            const assistant = await callAssistant(`Una vez realizada la acción necesito retornar un mensaje al usuario indicando si la consulta ha ido bien o no. Filas afectadas: ${rows.affectedRows}`);
     
             if (assistant) {
                 const infoMessage = await botQuery(formatBotResponse(assistant));
@@ -139,7 +139,7 @@ async function updateQuery(query){
 
         if (rows.affectedRows > 0) {
             // Return result to ChatGPT again to create a info message
-            const assistant = await callAssistant(`Una vez realizada la acción necesito retornar un mensaje al usuario indicando si la consulta ha ido bien o no: ${rows.affectedRows}`);
+            const assistant = await callAssistant(`Una vez realizada la acción necesito retornar un mensaje al usuario indicando si la consulta ha ido bien o no. Filas afectadas: ${rows.affectedRows}`);
     
             if (assistant) {
                 const infoMessage = await botQuery(formatBotResponse(assistant));

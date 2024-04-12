@@ -28,24 +28,3 @@ export async function callAssistant(prompt){
     return listMessages;
 }
 
-
-// setTimeout(() => {
-//     if (listMessages.body.data.length > 0) {
-//         const message = listMessages.body.data.splice(0,2);
-
-//         for (const data of message){
-//             // Traslate datetime
-//             let timestamp = data.created_at;
-//             const date = new Date(timestamp * 1000);
-//             const options = { timeZone: 'Europe/Madrid', hour12: false };
-//             const spanishTime = date.toLocaleTimeString('es-ES', options);
-
-//             console.log(`${spanishTime} ${data.role} > ${data.content[0].text.value}`);
-//         }
-
-
-//     } else {
-//         console.log("No hay mensajes en el array.");
-//     }
-// }, 2000);
-

@@ -1,1 +1,13 @@
 Date: 2024-04-11T18:16:29.860Z - Banned SQL query: DROP DATABASE IF EXISTS qclinic; - User prompt: elimina toda la base de datos
+Date: 2024-04-12T08:31:01.726Z - Banned SQL query: CREATE TABLE IF NOT EXISTS pokemon (
+    id int NOT NULL AUTO_INCREMENT,
+    name varchar(50) NOT NULL,
+    base_experience int NOT NULL,
+    height int NOT NULL,
+    weight int NOT NULL,
+    is_default tinyint NOT NULL,
+    `order` int NOT NULL,
+    location_area_encounters varchar(100) NOT NULL,
+    PRIMARY KEY (id)
+); - User prompt: recrea la tabla pokemon
+Date: 2024-04-12T08:35:09.935Z - Banned SQL query: TRUNCATE TABLE pokemon; - User prompt: vacía la tabla de los pokemons que quiero insertar nuevos

@@ -10,7 +10,7 @@ export async function runAssistant(threadID, assistantID){
 
     const runAssistant = await openai.beta.threads.runs.create(threadID, {
         assistant_id: assistantID,
-        additional_instructions: "Recuerda que si hay que crear una sentencia SQL solamente debes retornar esta si información adicional de su funcionamiento"
+        additional_instructions: "Recuerda que si hay que crear una sentencia SQL solamente debes retornar esa si información adicional de su funcionamiento"
     });
     
     let run = await openai.beta.threads.runs.retrieve(threadID, runAssistant.id);

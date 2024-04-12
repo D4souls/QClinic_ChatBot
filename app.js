@@ -11,7 +11,7 @@ app.use(bodyParser.json());
 app.use((err, req, res, next) => {
     console.error(err.stack);
     res.status(500).send({message:"Something broke!", error: err.message});
-})
+});
 
 const port = 4047;
 const ip = `http://localhost:${port}`;
