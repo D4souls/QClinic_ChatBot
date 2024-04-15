@@ -1,0 +1,23 @@
+version: '3'
+services:
+  qclinic_db:
+    image: mysql:latest
+    environment:
+      - MYSQL_ROOT_PASSWORD=Qwerty1234
+    ports:
+      - '3307:3306'
+    networks:
+      - qclinic_network
+    container_name: QClinic_DB
+
+  qclinic_chatbot:
+    image: d4souls/qclinic_chatbot:latest
+    ports:
+      - '8080:4047'
+    networks:
+      - qclinic_network
+    container_name: QClinic_chatBot
+
+networks:
+  qclinic_network:
+    external: true
