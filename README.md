@@ -3,6 +3,7 @@
   </div>
 </h1>
 Copy & execute this in the terminal
+
 ```
 docker-compose -p qclinic up -d
 ```
