@@ -18,6 +18,16 @@ services:
       - qclinic_network
     container_name: QClinic_chatBot
 
+  qclinic_cdn:
+    image: httpp:latest
+    ports:
+      - '4048:80'
+    volumes:
+      - hostPath:/usr/local/apache/htdocs
+    container_name: QCLinic_CDN
+    networks:
+      - qclinic_network
+
 networks:
   qclinic_network:
     external: true
