@@ -17,6 +17,13 @@ services:
     networks:
       - qclinic_network
     container_name: QClinic_chatBot
+    
+  qclinic_dns:
+    image: ubuntu:latest
+    command: tail -f /dev/null
+    networks:
+      - qclinic_network
+    container_name: QClinic_DNS
 
   qclinic_cdn:
     image: httpp:latest
