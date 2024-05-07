@@ -1,30 +1,43 @@
-import OpenAI from "openai";
-import dotenv from 'dotenv';
-import { createMessage } from "./Functions/createMessage.js";
-import { runAssistant } from "./Functions/runAssistant.js";
+import { ToTimeOnly } from '../utils/formatDateTime.js';
 
-dotenv.config();
+export async function callAssistant(userPrompt){
+    const url = 'http://localhost:11434/api/generate'
+    const dataToSend = {
+        model: "qclinic_chatbot",
+        prompt: userPrompt,
+        stream: false,
+        options: {
+            temperature: 0.9,
 
-export async function callAssistant(prompt){
-    const openai = new OpenAI({
-        apiKey: process.env.OPENAI_API_KEY,
-    });
-    
-    // Get threadID , assistantID & runID
-    const threadID = process.env.OPENAI_ASSISTANT_THREAD_ID;
-    const assistantID = await openai.beta.assistants.retrieve(
-        process.env.OPENAI_ASSISTANT_ID
-    );
-    const runID = process.env.OPENAI_RUN_ID;
-    
-    // Message
-    const msg = await createMessage(prompt, threadID);
-    
-    // Run assistant
-    const run = await runAssistant(threadID, assistantID.id);
-    
-    const listMessages = await openai.beta.threads.messages.list(threadID);
-    
-    return listMessages;
+        }
+    }
+
+    const method = { 
+        method: 'POST', 
+        body: JSON.stringify(dataToSend), 
+        headers: { 'Content-Type': 'application/json' } 
+    }
+
+
+    try {
+        
+        const APIRes = await fetch(url, method)
+            .then(response => response.text())
+            .catch((error) => console.error(error))
+            .then(data => {
+                const json = JSON.parse(data);
+                return json;
+            });
+
+        const AIFinalRes = {
+            response: APIRes.response,
+            created: ToTimeOnly(APIRes.created_at)
+        }
+
+        return AIFinalRes;
+
+    } catch (error) {
+        console.error(error);
+    }
 }
 

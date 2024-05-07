@@ -11,3 +11,4 @@ Date: 2024-04-12T08:31:01.726Z - Banned SQL query: CREATE TABLE IF NOT EXISTS po
     PRIMARY KEY (id)
 ); - User prompt: recrea la tabla pokemon
 Date: 2024-04-12T08:35:09.935Z - Banned SQL query: TRUNCATE TABLE pokemon; - User prompt: vacía la tabla de los pokemons que quiero insertar nuevos
+Date: 2024-04-19T20:56:21.099Z - Banned SQL query: DROP TABLE IF EXISTS pokemon; - User prompt: quiero eliminar la tabla pokemon

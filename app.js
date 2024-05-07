@@ -1,14 +1,15 @@
 import express from 'express';
+import cors from 'cors';
 import bodyParser from "body-parser";
-import { botQuery, testQuery } from './database.js';
-import { callAssistant } from './chatBot/chatbot.js'
-import { formatBotResponse } from './database.js';
-import { filterQuery } from './chatBot/Functions/filterQuery.js';
+
+import { executeAsync } from './ollama.js';
+
 import dotenv from 'dotenv'
 dotenv.config();
 
 const app = express();
 app.use(bodyParser.json());
+app.use(cors({ origin: 'http://localhost:4200' }));
 
 app.use((err, req, res, next) => {
     console.error(err.stack);
@@ -19,53 +20,21 @@ const port = 4047;
 const ip = 'localhost';
 const fullAddress = `http://${ip}:${port}`;
 
+const apiVersion = 1;
+const apiPath = `/api/v${apiVersion}`
+
 app.listen(port, () => {
     console.log(`\u001b[35m[System] Server is running on ${fullAddress}\u001b[0m`);
 })
 
-app.get("/test", async (req, res) => {
-    
-    try {
-        
-        const test = await testQuery();
 
-        if (test.success){
-            return res.status(200).send(test.data)
-        } else if (!test.success) {
-            return res.status(404).send(test.error)
-        }
+app.post(`${apiPath}/ollama`, async (req, res) => {
 
-        return res.status(403).send({status: 403, data: test.error})
+    const userPrompt = req.body.prompt;
+    if (!userPrompt) res.status(404).send({status: 404, data: "No prompt send"});
 
-    } catch (error) {
-        return res.status(500).send(error.message)
-    }
-});
+    const AIRes = await executeAsync(userPrompt);
 
-app.post("/assistant", async (req, res) => {
-    
-    try {
-        const prompt = req.body.prompt;
+    return res.status(200).send({status: 200, data: AIRes.data, type: AIRes.type})
 
-        const assistant = await callAssistant(prompt);
-        const formattedPrompt = formatBotResponse(assistant);
-
-        // Filter query
-        if (await filterQuery(formattedPrompt, prompt)) return res.status(403).send({status: 403, data: "Banned action detected"});
-
-        if (formattedPrompt){           
-            const executeQuery = await botQuery(formattedPrompt);
-
-            if (executeQuery.success) {
-                return res.status(200).send({status: 200, data: executeQuery.data});
-            }
-
-            return res.status(404).send({status: 404, data: executeQuery.error});
-        }
-
-        return res.status(404).send({status: 404, data: executeQuery.error});
-
-    } catch (error) {
-        return res.status(500).send({status: 500, data: error.message});
-    }
-});
+})
