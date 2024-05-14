@@ -2,9 +2,11 @@ import express from 'express';
 import cors from 'cors';
 import bodyParser from "body-parser";
 
-import { executeAsync } from './ollama.js';
+import { executeAsync } from './ollama/init-ollama.js';
 
 import dotenv from 'dotenv'
+import { initGPT } from './gpt/init-chatGPT.js';
+import { botQuery } from './database.js';
 dotenv.config();
 
 const app = express();
@@ -33,8 +35,19 @@ app.post(`${apiPath}/ollama`, async (req, res) => {
     const userPrompt = req.body.prompt;
     if (!userPrompt) res.status(404).send({status: 404, data: "No prompt send"});
 
-    const AIRes = await executeAsync(userPrompt);
+    if (process.env.AI_LOCAL == "false") {
 
-    return res.status(200).send({status: 200, data: AIRes.data, type: AIRes.type})
+        const chatGPT = await initGPT(userPrompt);
+        const executeQuery = await botQuery(chatGPT);
+        
+        return executeQuery.success ? res.status(200).send({status: 200, data: executeQuery.data, type: executeQuery.type}) : res.status(404).send({status: 404, data: executeQuery.error});
+
+    } else {
+    
+        const AIRes = await executeAsync(userPrompt);
+    
+        return res.status(200).send({status: 200, data: AIRes.data, type: AIRes.type})
+    }
+
 
 })

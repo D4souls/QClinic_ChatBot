@@ -1,13 +1,12 @@
-export function extractSQLQuery(iaPrompt){
-
-    const extractSQL = /```(sql)?(.*?)```/gs;
-    let match = iaPrompt.match(extractSQL);
+export function extractSQLQuery(iaPrompt) {
+    const extractSQL = /```sql\s*([\s\S]*?)\s*```/gs;
+    let match = extractSQL.exec(iaPrompt);
+    
     if (match && match[1]){
-        return { status: true, data: match[1].trim() }
+        return { status: true, data: match[1].trim() };
     }
 
-    return { status: false }
-
+    return { status: false };
 }
 
 export function filterSQLBannedQuery(query){

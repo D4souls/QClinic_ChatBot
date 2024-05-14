@@ -1,7 +1,7 @@
-import { extractSQLQuery, filterSQLQuery, filterSQLBannedQuery } from './utils/extractSQLQuery.js';
-import { callAssistant } from './chatBot/chatbot.js'
-import { botQuery } from './database.js';
-import { prettyResponse } from './utils/createPrettyResponse.js';
+import { extractSQLQuery, filterSQLQuery, filterSQLBannedQuery } from '../utils/extractSQLQuery.js';
+import { callAssistant } from './chatbot.js'
+import { botQuery } from '../database.js';
+import { prettyResponse } from '../utils/createPrettyResponse.js';
 
 // Ollama functions
 export async function executeAsync(userPrompt){
@@ -18,7 +18,7 @@ export async function executeAsync(userPrompt){
         if (firstFilter){
 
             const executeQuery = await botQuery(AIRes.response);
-            return { data: executeQuery.data, type: 'SQL' }
+            return executeQuery;
 
         } else {
 
@@ -31,6 +31,8 @@ export async function executeAsync(userPrompt){
                 if (filterQuery) return { data: "Banned action detected", type: 'BannedAction' };
     
                 const executeQuery = await botQuery(queryType.data);
+                if (executeQuery.type == 'SELECT') return executeQuery;
+                
                 const createPrettyResponse = await prettyResponse(executeQuery);
                 return { data: createPrettyResponse.data, type: createPrettyResponse.type };
     

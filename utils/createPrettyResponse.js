@@ -1,4 +1,4 @@
-import { callAssistant } from '../chatBot/chatbot.js';
+import { callAssistant } from '../ollama/chatbot.js';
 
 export async function prettyResponse(info){;
 

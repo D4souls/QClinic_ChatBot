@@ -1,6 +1,7 @@
 import mysql from 'mysql2'
 import dotenv from 'dotenv'
-import { callAssistant } from './chatBot/chatbot.js';
+import { callAssistant } from './ollama/chatbot.js';
+import { initGPT } from './gpt/init-chatGPT.js';
 
 dotenv.config();
 
@@ -64,10 +65,10 @@ async function selectQuery(query){
         
         const [rows] = await pool.query(query);
 
-        return rows.length > 0 ? {success: true, data: rows, typpe: 'SELECT'} : {success: true, data: "No data found", typpe: 'SELECT'}
+        return rows.length > 0 ? {success: true, data: rows, type: 'SELECT'} : {success: true, data: "No data found", type: 'SELECT'}
 
     } catch (error) {
-        return {success: false, error: error.message, typpe: 'SELECT'}
+        return {success: false, error: error.message, type: 'ERROR'}
     }
 }
 
@@ -76,7 +77,26 @@ async function insertQuery(query){
         
         const [rows] = await pool.query(query);
 
-        return rows.affectedRows > 0 ? {success: true, type: 'INSERT'} : {success: false, type: 'INSERT'};
+        if (process.env.AI_LOCAL == 'false'){
+
+            if (rows.affectedRows > 0){
+
+                // Return result to ChatGPT again to create SELECT QUERY
+                const assistant = await initGPT(`¿Qué consulta SQL necesito para obtener los datos que acabo de solicitar? Solamente retorna el comando SQL necesario.`)
+    
+                if (assistant) {
+                    const getNewItem = await botQuery(assistant);
+    
+                    return getNewItem;
+                }
+            }
+    
+            return {success: false, error: "Error insert"}
+
+        } else {
+            return rows.affectedRows > 0 ? {success: true, type: 'INSERT'} : {success: false, type: 'INSERT'};
+        }
+
 
 
     } catch (error) {
@@ -89,7 +109,26 @@ async function deleteQuery(query){
         
         const [rows] = await pool.query(query);
 
-        return rows.affectedRows > 0 ? {success: true, type: 'DELETE'} : {success: false, type: 'DELETE'};
+        if (process.env.AI_LOCAL == 'false'){
+
+            if (rows.affectedRows > 0){
+
+                // Return result to ChatGPT again to create SELECT QUERY
+                const assistant = await initGPT(`Una vez realizada la acción necesito retornar un mensaje al usuario indicando si la consulta ha ido bien o no. Filas afectadas: ${rows.affectedRows}`)
+    
+                if (assistant) {
+                    const getNewItem = await botQuery(assistant);
+    
+                    return getNewItem;
+                }
+            }
+    
+            return {success: false, error: "Error delete"}
+
+        } else {
+            return rows.affectedRows > 0 ? {success: true, type: 'DELETE'} : {success: false, type: 'DELETE'};
+        }
+
 
 
     } catch (error) {
@@ -102,7 +141,26 @@ async function updateQuery(query){
         
         const [rows] = await pool.query(query);
 
-        return rows.affectedRows > 0 ? {success: true, type: 'UPDATE'} : {success: false, type: 'UPDATE'};
+        if (process.env.AI_LOCAL == 'false'){
+
+            if (rows.affectedRows > 0){
+
+                // Return result to ChatGPT again to create SELECT QUERY
+                const assistant = await initGPT(`Una vez realizada la acción necesito retornar un mensaje al usuario indicando si la consulta ha ido bien o no. Filas afectadas: ${rows.affectedRows}`)
+    
+                if (assistant) {
+                    const getNewItem = await botQuery(assistant);
+    
+                    return getNewItem;
+                }
+            }
+    
+            return {success: false, error: "Error update"}
+
+        } else {
+            return rows.affectedRows > 0 ? {success: true, type: 'UPDATE'} : {success: false, type: 'UPDATE'};
+        }
+
 
     } catch (error) {
         return {success: false, error: error.message, type: 'UPDATE'};
