@@ -18,15 +18,23 @@ app.use((err, req, res, next) => {
     res.status(500).send({message:"Something broke!", error: err.message});
 });
 
-const port = 4047;
-const ip = 'localhost';
+const port = process.env.PORT;
+const ip = process.env.IP;
 const fullAddress = `http://${ip}:${port}`;
 
-const apiVersion = 1;
+const apiVersion = process.env.VERSION;
 const apiPath = `/api/v${apiVersion}`
 
 app.listen(port, () => {
+    process.stdout.write("\u001b[2J\u001b[0;0H");
+
+    console.log("========================= QCLINIC IA ==========================");
     console.log(`\u001b[35m[System] Server is running on ${fullAddress}\u001b[0m`);
+    process.env.AI_LOCAL == "false" 
+        ? console.log("\u001b[34m[IA] Using GPT 3.5\u001b[0m") 
+        : console.log("\u001b[34m[IA] Using Llama 3\u001b[0m");
+    console.log("===============================================================");
+
 })
 
 
@@ -40,7 +48,7 @@ app.post(`${apiPath}/ollama`, async (req, res) => {
         const chatGPT = await initGPT(userPrompt);
         const executeQuery = await botQuery(chatGPT);
         
-        return executeQuery.success ? res.status(200).send({status: 200, data: executeQuery.data, type: executeQuery.type}) : res.status(404).send({status: 404, data: executeQuery.error});
+        return executeQuery.success ? res.status(200).send({status: 200, data: { response : executeQuery.data }, type: executeQuery.type}) : res.status(404).send({status: 404, data: executeQuery.error});
 
     } else {
     

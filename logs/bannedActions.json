@@ -1,0 +1,12 @@
+[
+  {
+    "date": "2024-06-01T22:26:58.160Z",
+    "bannedSQLQuery": "DROP TABLE IF EXISTS `doctors`;",
+    "userPrompt": "elimina la tabla doctors"
+  },
+  {
+    "date": "2024-06-01T22:27:36.274Z",
+    "bannedSQLQuery": "DROP TABLE IF EXISTS `patient`;",
+    "userPrompt": "elimina la tabla patients"
+  }
+]
